@@ -4,7 +4,6 @@
 
 #define MAX_USERS 1000
 
-// Definindo a struct para armazenar os dados do usuário
 struct Usuario {
     int id;
     char nome[100];
@@ -15,13 +14,19 @@ struct Usuario {
     int vacina;
 };
 
-// Função para gerar um ID único para cada usuário
 int gerarId() {
-    return rand() % 10000 + 1;  // Gera um ID entre 1 e 10000
+    return rand() % 10000 + 1;
 }
 
-// Função para adicionar um novo usuário
-void adicionarUsuario(struct Usuario usuarios[], int *numUsuarios) {
+int validarEmail(const char *email) {
+    return strchr(email, '@') != NULL;
+}
+
+int validarSexo(const char *sexo) {
+    return strcmp(sexo, "Feminino") == 0 || strcmp(sexo, "Masculino") == 0 || strcmp(sexo, "Indiferente") == 0;
+}
+
+int adicionarUsuario(struct Usuario usuarios[], int *numUsuarios) {
     if (*numUsuarios < MAX_USERS) {
         struct Usuario novoUsuario;
         novoUsuario.id = gerarId();
@@ -33,18 +38,20 @@ void adicionarUsuario(struct Usuario usuarios[], int *numUsuarios) {
         scanf(" %s", novoUsuario.email);
 
         // Validando o campo de email
-        if (strchr(novoUsuario.email, '@') == NULL) {
+        while (!validarEmail(novoUsuario.email)) {
             printf("Email inválido. Certifique-se de incluir '@' no endereço de email.\n");
-            return;
+            printf("Digite o email novamente: ");
+            scanf(" %s", novoUsuario.email);
         }
 
         printf("Digite o sexo (Feminino, Masculino ou Indiferente): ");
         scanf(" %s", novoUsuario.sexo);
 
         // Validando o campo de sexo
-        if (strcmp(novoUsuario.sexo, "Feminino") != 0 && strcmp(novoUsuario.sexo, "Masculino") != 0 && strcmp(novoUsuario.sexo, "Indiferente") != 0) {
+        while (!validarSexo(novoUsuario.sexo)) {
             printf("Sexo inválido. Escolha entre Feminino, Masculino ou Indiferente.\n");
-            return;
+            printf("Digite o sexo novamente: ");
+            scanf(" %s", novoUsuario.sexo);
         }
 
         printf("Digite o endereço: ");
@@ -54,9 +61,10 @@ void adicionarUsuario(struct Usuario usuarios[], int *numUsuarios) {
         scanf("%lf", &novoUsuario.altura);
 
         // Validando o campo de altura
-        if (novoUsuario.altura < 1.0 || novoUsuario.altura > 2.0) {
+        while (novoUsuario.altura < 1.0 || novoUsuario.altura > 2.0) {
             printf("Altura inválida. Digite um valor entre 1 e 2 metros.\n");
-            return;
+            printf("Digite a altura novamente: ");
+            scanf("%lf", &novoUsuario.altura);
         }
 
         printf("O usuário foi vacinado? (1 para Sim, 0 para Não): ");
@@ -66,12 +74,13 @@ void adicionarUsuario(struct Usuario usuarios[], int *numUsuarios) {
         (*numUsuarios)++;
 
         printf("Usuário adicionado com sucesso!\n");
+        return 1; // Indica sucesso na adição
     } else {
         printf("Limite máximo de usuários atingido.\n");
+        return 0; // Indica falha na adição
     }
 }
 
-// Função para editar um usuário pelo ID
 void editarUsuario(struct Usuario usuarios[], int numUsuarios) {
     int idEditar;
     printf("Digite o ID do usuário que deseja editar: ");
@@ -87,18 +96,20 @@ void editarUsuario(struct Usuario usuarios[], int numUsuarios) {
             scanf(" %s", usuarios[i].email);
 
             // Validando o campo de email
-            if (strchr(usuarios[i].email, '@') == NULL) {
+            while (!validarEmail(usuarios[i].email)) {
                 printf("Email inválido. Certifique-se de incluir '@' no endereço de email.\n");
-                return;
+                printf("Digite o email novamente: ");
+                scanf(" %s", usuarios[i].email);
             }
 
             printf("Digite o novo sexo (Feminino, Masculino ou Indiferente): ");
             scanf(" %s", usuarios[i].sexo);
 
             // Validando o campo de sexo
-            if (strcmp(usuarios[i].sexo, "Feminino") != 0 && strcmp(usuarios[i].sexo, "Masculino") != 0 && strcmp(usuarios[i].sexo, "Indiferente") != 0) {
+            while (!validarSexo(usuarios[i].sexo)) {
                 printf("Sexo inválido. Escolha entre Feminino, Masculino ou Indiferente.\n");
-                return;
+                printf("Digite o sexo novamente: ");
+                scanf(" %s", usuarios[i].sexo);
             }
 
             printf("Digite o novo endereço: ");
@@ -108,9 +119,10 @@ void editarUsuario(struct Usuario usuarios[], int numUsuarios) {
             scanf("%lf", &usuarios[i].altura);
 
             // Validando o campo de altura
-            if (usuarios[i].altura < 1.0 || usuarios[i].altura > 2.0) {
+            while (usuarios[i].altura < 1.0 || usuarios[i].altura > 2.0) {
                 printf("Altura inválida. Digite um valor entre 1 e 2 metros.\n");
-                return;
+                printf("Digite a altura novamente: ");
+                scanf("%lf", &usuarios[i].altura);
             }
 
             printf("O usuário foi vacinado? (1 para Sim, 0 para Não): ");
@@ -127,7 +139,6 @@ void editarUsuario(struct Usuario usuarios[], int numUsuarios) {
     }
 }
 
-// Função para excluir um usuário pelo ID
 void excluirUsuario(struct Usuario usuarios[], int *numUsuarios) {
     int idExcluir;
     printf("Digite o ID do usuário que deseja excluir: ");
@@ -151,7 +162,6 @@ void excluirUsuario(struct Usuario usuarios[], int *numUsuarios) {
     }
 }
 
-// Função para buscar um usuário pelo email
 void buscarUsuarioPorEmail(struct Usuario usuarios[], int numUsuarios) {
     char emailBusca[100];
     printf("Digite o email do usuário que deseja buscar: ");
@@ -178,7 +188,6 @@ void buscarUsuarioPorEmail(struct Usuario usuarios[], int numUsuarios) {
     }
 }
 
-// Função para imprimir todos os usuários cadastrados
 void imprimirUsuarios(struct Usuario usuarios[], int numUsuarios) {
     if (numUsuarios > 0) {
         printf("Lista de Usuários:\n");
